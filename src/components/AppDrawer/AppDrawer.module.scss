@@ -1,0 +1,198 @@
+$neon: #00ff87;
+$text: #c9ffd9;
+$muted: rgba(201, 255, 217, 0.72);
+
+$border: rgba(0, 255, 135, 0.18);
+$borderStrong: rgba(0, 255, 135, 0.32);
+
+@mixin focusRing {
+  outline: none;
+  border-color: rgba(0, 255, 135, 0.45);
+  box-shadow: 0 0 0 4px rgba(0, 255, 135, 0.12);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  z-index: 50;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: min(360px, 88vw);
+  z-index: 60;
+
+  background:
+    radial-gradient(520px 180px at 30% 0%, rgba(0, 255, 135, 0.14), transparent 70%),
+    linear-gradient(180deg, rgba(0,0,0,0.82), rgba(0,0,0,0.62));
+
+  border-right: 1px solid $border;
+  box-shadow: 18px 0 40px rgba(0,0,0,0.55);
+  padding: 1rem;
+
+  color: $text;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.headerTitle {
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 12px rgba(0, 255, 135, 0.22);
+}
+
+.cursor {
+  margin-left: 0.25rem;
+  color: $neon;
+  text-shadow: 0 0 10px rgba(0, 255, 135, 0.35);
+  animation: blink 1.1s steps(1, end) infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.closeBtn {
+  background: rgba(0, 255, 135, 0.08);
+  border: 1px solid $border;
+  color: #bfffd7;
+  border-radius: 12px;
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+
+  &:focus-visible { @include focusRing; }
+}
+
+.userBlock {
+  padding: 0.9rem;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 255, 135, 0.16);
+  margin-bottom: 0.9rem;
+}
+
+.greeting {
+  font-size: 0.9rem;
+  color: $muted;
+  margin-bottom: 0.25rem;
+}
+
+.email {
+  font-size: 0.95rem;
+  color: $text;
+  opacity: 0.92;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+.linkBtn {
+  text-align: left;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 255, 135, 0.16);
+  color: $text;
+  padding: 0.8rem 0.9rem;
+  border-radius: 14px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: rgba(0, 255, 135, 0.30);
+    box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.06);
+  }
+
+  &:focus-visible { @include focusRing; }
+}
+
+.section {
+  padding: 0.9rem;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 255, 135, 0.16);
+  margin-bottom: 0.9rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: $muted;
+  font-size: 0.85rem;
+}
+
+.search {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.62);
+  border: 1px solid rgba(0, 255, 135, 0.22);
+  color: $text;
+  padding: 0.85rem 0.95rem;
+  border-radius: 12px;
+
+  &:focus { @include focusRing; }
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.filter,
+.filterActive {
+  font-size: 0.75rem;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid rgba(0, 255, 135, 0.18);
+  transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.filter {
+  background: rgba(0, 0, 0, 0.45);
+  color: $muted;
+
+  &:hover {
+    border-color: rgba(0, 255, 135, 0.32);
+    box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.06);
+  }
+}
+
+.filterActive {
+  background: rgba(0, 255, 135, 0.18);
+  border-color: $borderStrong;
+  color: #bfffd7;
+  box-shadow:
+    0 0 0 3px rgba(0, 255, 135, 0.08),
+    0 0 18px rgba(0, 255, 135, 0.14);
+}
+
+.logoutBtn {
+  width: 100%;
+  background: rgba(255, 60, 60, 0.08);
+  border: 1px solid rgba(255, 60, 60, 0.25);
+  color: #ffd2d2;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 0 0 3px rgba(255, 60, 60, 0.08);
+  }
+}
