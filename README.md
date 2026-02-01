@@ -6,7 +6,7 @@ Instead of using a traditional journal or notes app, Dev Diary allows users to r
 
 ---
 
-## Why Dev Diary?
+## Why Code Dev Diary?
 
 When learning to code, it’s common to:
 - Forget how you solved a problem
@@ -57,7 +57,7 @@ Dev Diary solves this by acting like a **developer-first journal**, combining wr
 
 ## Design Philosophy
 
-Dev Diary is intentionally:
+Code Dev Diary is intentionally:
 - **Minimal** – no unnecessary features or distractions
 - **Beginner-friendly** – easy to understand and extend
 - **Code-first** – syntax is treated as a first-class part of each entry
