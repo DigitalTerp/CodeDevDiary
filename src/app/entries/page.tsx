@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { getEntries, DevDiaryEntry } from '@/lib/entries';
+import { logOut } from '@/lib/auth';
 import AppNavbar from '@/components/AppNavbar/AppNavbar';
 import AppDrawer from '@/components/AppDrawer/AppDrawer';
 import styles from './EntriesPage.module.scss';
@@ -24,6 +25,15 @@ export default function EntriesPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  async function handleLogout() {
+    try {
+      await logOut();
+    } finally {
+      router.replace('/'); 
+      router.refresh();
+    }
+  }
 
   useEffect(() => {
     if (loading) return;
@@ -56,7 +66,7 @@ export default function EntriesPage() {
         userEmail={user.email ?? ''}
         onGoEntries={() => router.push('/entries')}
         onNewEntry={() => router.push('/entries/new')}
-        onLogout={() => router.push('/login')}
+        onLogout={handleLogout}
         onOpenMenu={() => setDrawerOpen(true)}
       />
 
@@ -78,15 +88,14 @@ export default function EntriesPage() {
           router.push('/entries/new');
           setDrawerOpen(false);
         }}
-        onLogout={() => {
+        onLogout={async () => {
           setDrawerOpen(false);
-          router.push('/login');
+          await handleLogout();
         }}
       />
 
       <div className={styles.navSpacer} />
 
-      {/* ✅ New header style: NOT a pill/card */}
       <header className={styles.topHeader}>
         <div className={styles.titleLine}>
           <h1 className={styles.pageTitle}>Current Entries</h1>

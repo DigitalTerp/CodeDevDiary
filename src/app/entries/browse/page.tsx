@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { getEntries, DevDiaryEntry } from '@/lib/entries';
+import { logOut } from '@/lib/auth';
 import AppNavbar from '@/components/AppNavbar/AppNavbar';
 import AppDrawer from '@/components/AppDrawer/AppDrawer';
 import styles from './BrowseEntriesPage.module.scss';
@@ -16,8 +17,6 @@ function getGreeting() {
 }
 
 function parseEntryDate(dateStr: string) {
-  // dateStr expected like "YYYY-MM-DD"
-  // Add time to avoid timezone shifting issues.
   const d = new Date(`${dateStr}T00:00:00`);
   return isNaN(d.getTime()) ? null : d;
 }
@@ -38,11 +37,10 @@ function isSameDay(a: Date, b: Date) {
 function isWithinLastNDays(d: Date, n: number) {
   const today = startOfToday();
   const cutoff = new Date(today);
-  cutoff.setDate(today.getDate() - (n - 1)); // includes today as day 1
+  cutoff.setDate(today.getDate() - (n - 1));
   return d >= cutoff && d <= new Date(today.getTime() + 24 * 60 * 60 * 1000);
 }
 
-// Escapes regex special chars so search terms don’t break highlighting
 function escapeRegExp(str: string) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -51,7 +49,6 @@ function highlight(text: string, query: string) {
   const q = query.trim();
   if (!q) return text;
 
-  // Split query into tokens (space-separated), ignore tiny tokens
   const tokens = q
     .split(/\s+/)
     .map((t) => t.trim())
@@ -64,7 +61,6 @@ function highlight(text: string, query: string) {
 
   return parts.map((part, idx) => {
     if (pattern.test(part)) {
-      // reset lastIndex since .test() with /g can be stateful
       pattern.lastIndex = 0;
       return (
         <mark key={idx} className={styles.hl}>
@@ -87,17 +83,23 @@ export default function BrowseEntriesPage() {
   const [search, setSearch] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // keyboard selection for list
   const [activeId, setActiveId] = useState<string | null>(null);
   const searchRef = useRef<HTMLInputElement | null>(null);
 
-  // 🔐 Auth guard
+  async function handleLogout() {
+    try {
+      await logOut();
+    } finally {
+      router.replace('/'); 
+      router.refresh();
+    }
+  }
+
   useEffect(() => {
     if (loading) return;
     if (!user) router.replace('/login');
   }, [user, loading, router]);
 
-  // 📄 Fetch all entries
   useEffect(() => {
     if (!user) return;
 
@@ -113,7 +115,6 @@ export default function BrowseEntriesPage() {
       .finally(() => setEntriesLoading(false));
   }, [user]);
 
-  // 🔎 Filter
   const filteredEntries = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return entries;
@@ -125,7 +126,6 @@ export default function BrowseEntriesPage() {
     });
   }, [entries, search]);
 
-  // 📅 Grouping: Today / Last 7 Days / Older
   const grouped = useMemo(() => {
     const today = startOfToday();
 
@@ -150,7 +150,6 @@ export default function BrowseEntriesPage() {
     return buckets;
   }, [filteredEntries]);
 
-  // Ensure activeId stays valid when filtering changes
   useEffect(() => {
     if (filteredEntries.length === 0) {
       setActiveId(null);
@@ -161,7 +160,7 @@ export default function BrowseEntriesPage() {
     }
   }, [filteredEntries, activeId]);
 
-  // ⌨️ Keyboard shortcuts
+  
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       const target = e.target as HTMLElement | null;
@@ -169,14 +168,12 @@ export default function BrowseEntriesPage() {
       const isTypingInField =
         tag === 'input' || tag === 'textarea' || (target as any)?.isContentEditable;
 
-      // "/" focuses search (unless already typing somewhere)
       if (e.key === '/' && !isTypingInField) {
         e.preventDefault();
         searchRef.current?.focus();
         return;
       }
 
-      // Esc clears search if search has text, otherwise blur
       if (e.key === 'Escape') {
         if (document.activeElement === searchRef.current) {
           if (search) setSearch('');
@@ -185,7 +182,6 @@ export default function BrowseEntriesPage() {
         return;
       }
 
-      // Only handle list navigation if NOT typing in a field
       if (isTypingInField) return;
       if (filteredEntries.length === 0) return;
 
@@ -207,7 +203,6 @@ export default function BrowseEntriesPage() {
         return;
       }
 
-      // Enter opens selected entry
       if (e.key === 'Enter' && activeId) {
         e.preventDefault();
         router.push(`/entries/${activeId}`);
@@ -233,7 +228,7 @@ export default function BrowseEntriesPage() {
       >
         <div className={styles.meta}>
           <span className={styles.date}>{entry.date}</span>
-          <h2 className={styles.title}>{highlight(entry.title, search)}</h2>
+          <h2 className={styles.title}>{highlight(entry.title ?? '', search)}</h2>
         </div>
 
         <div className={styles.actions}>
@@ -263,7 +258,7 @@ export default function BrowseEntriesPage() {
         userEmail={user.email ?? ''}
         onGoEntries={() => router.push('/entries')}
         onNewEntry={() => router.push('/entries/new')}
-        onLogout={() => router.push('/login')}
+        onLogout={handleLogout}
         onOpenMenu={() => setDrawerOpen(true)}
       />
 
@@ -285,9 +280,9 @@ export default function BrowseEntriesPage() {
           router.push('/entries/new');
           setDrawerOpen(false);
         }}
-        onLogout={() => {
+        onLogout={async () => {
           setDrawerOpen(false);
-          router.push('/login');
+          await handleLogout();
         }}
       />
 
