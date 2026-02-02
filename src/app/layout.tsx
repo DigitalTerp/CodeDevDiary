@@ -15,10 +15,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Code Dev. Diary",
   description: "A CRUD Code Development Syntax App",
-    icons: {
-    icon: './CodeDevIco.svg', 
-    apple: './CodeDevIco.svg',
-  },
 };
 
 export default function RootLayout({
