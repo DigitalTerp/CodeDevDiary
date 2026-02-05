@@ -13,8 +13,10 @@ import {
 import { db } from './firebase';
 
 export type DevDiaryEntryData = {
+  id?: string;
   date: string;
   title: string;
+  problem: string;
   tech: string[];
   notes: string;
   code: string;

@@ -7,7 +7,7 @@ type AppNavbarProps = {
   onGoEntries: () => void;
   onNewEntry: () => void;
   onLogout: () => void;
-  onOpenMenu?: () => void; 
+  onOpenMenu?: () => void;
 };
 
 function getGreeting() {
@@ -49,12 +49,17 @@ export default function AppNavbar({
 
       <div className={styles.right}>
         <button className={styles.primaryBtn} onClick={onNewEntry} type="button">
-          + New Entry
+          <span className={styles.btnIcon}>＋</span>
+          New Entry
         </button>
+
         <button className={styles.linkBtn} onClick={onGoEntries} type="button">
-          Current Entries
+          <span className={styles.btnIcon}>⟡</span>
+          Entries
         </button>
-        <button className={styles.ghostBtn} onClick={onLogout} type="button">
+
+        <button className={styles.dangerBtn} onClick={onLogout} type="button">
+          <span className={styles.btnIcon}>⨯</span>
           Logout
         </button>
       </div>

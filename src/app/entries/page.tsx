@@ -16,6 +16,29 @@ function getGreeting() {
   return 'Good Evening';
 }
 
+function formatDateTime(value?: string) {
+  if (!value) return '—';
+
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) {
+    const [d, t] = value.split('T');
+    return `${d}  ${t}`;
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+  const parsed = new Date(value);
+  if (!isNaN(parsed.getTime())) {
+    const yyyy = parsed.getFullYear();
+    const mm = String(parsed.getMonth() + 1).padStart(2, '0');
+    const dd = String(parsed.getDate()).padStart(2, '0');
+    const hh = String(parsed.getHours()).padStart(2, '0');
+    const mi = String(parsed.getMinutes()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}  ${hh}:${mi}`;
+  }
+
+  return value;
+}
+
 export default function EntriesPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -30,7 +53,7 @@ export default function EntriesPage() {
     try {
       await logOut();
     } finally {
-      router.replace('/'); 
+      router.replace('/');
       router.refresh();
     }
   }
@@ -43,11 +66,10 @@ export default function EntriesPage() {
   useEffect(() => {
     if (!user) return;
 
-    const uid = user.uid;
     setEntriesLoading(true);
     setError(null);
 
-    getEntries(uid)
+    getEntries(user.uid)
       .then(setEntries)
       .catch((err: any) => setError(err?.message ?? 'Failed to load entries.'))
       .finally(() => setEntriesLoading(false));
@@ -71,28 +93,28 @@ export default function EntriesPage() {
       />
 
       <AppDrawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        greeting={greeting}
-        userEmail={user.email ?? ''}
-        search={''}
-        onSearchChange={() => {}}
-        techOptions={[]}
-        techFilter={''}
-        onTechFilterChange={() => {}}
-        onGoEntries={() => {
-          router.push('/entries');
-          setDrawerOpen(false);
-        }}
-        onNewEntry={() => {
-          router.push('/entries/new');
-          setDrawerOpen(false);
-        }}
-        onLogout={async () => {
-          setDrawerOpen(false);
-          await handleLogout();
-        }}
-      />
+  open={drawerOpen}
+  onClose={() => setDrawerOpen(false)}
+  greeting={greeting}
+  userEmail={user.email ?? ''}
+  onGoEntries={() => {
+    router.push('/entries');
+    setDrawerOpen(false);
+  }}
+  onNewEntry={() => {
+    router.push('/entries/new');
+    setDrawerOpen(false);
+  }}
+  onBrowse={() => {
+    router.push('/entries/browse');
+    setDrawerOpen(false);
+  }}
+  onLogout={async () => {
+    setDrawerOpen(false);
+    await handleLogout();
+  }}
+/>
+
 
       <div className={styles.navSpacer} />
 
@@ -104,11 +126,12 @@ export default function EntriesPage() {
 
         <div className={styles.headerActions}>
           <button
-            className={styles.ghostBtn}
+            className={styles.browseBtn}
             onClick={() => router.push('/entries/browse')}
-            type="button"
-          >
-            Browse + Search
+            type="button">
+            <span className={styles.browseIcon}>⌕</span>
+            <span>Browse</span>
+            <span className={styles.cursor}>▮</span>
           </button>
         </div>
       </header>
@@ -124,16 +147,14 @@ export default function EntriesPage() {
       ) : (
         <section className={styles.list}>
           {latestFive.map((entry) => (
-            <article key={entry.id} className={styles.listCard}>
-              <div className={styles.listMain}>
-                <div className={styles.listHeader}>
-                  <span className={styles.listDate}>{entry.date}</span>
+            <article key={entry.id} className={styles.card}>
+              <div className={styles.metaRow}>
+                <span className={styles.dateTime}>{formatDateTime(entry.date)}</span>
+              </div>
 
-                  <div className={styles.listTitleRow}>
-                    <h2 className={styles.listTitle}>{entry.title}</h2>
-                  </div>
-                </div>
+              <h2 className={styles.title}>{entry.title}</h2>
 
+              {(entry.tech ?? []).length > 0 && (
                 <div className={styles.chips}>
                   {(entry.tech ?? []).slice(0, 6).map((t) => (
                     <span key={t} className={styles.chip}>
@@ -141,27 +162,35 @@ export default function EntriesPage() {
                     </span>
                   ))}
                 </div>
+              )}
 
-                <p className={styles.listNotes}>
-                  {entry.notes?.length > 140 ? `${entry.notes.slice(0, 140)}…` : entry.notes}
-                </p>
-              </div>
+              <p className={styles.problem}>
+                {(entry as any).problem
+                  ? (entry as any).problem.length > 140
+                    ? `${(entry as any).problem.slice(0, 140)}…`
+                    : (entry as any).problem
+                  : '—'}
+              </p>
 
-              <div className={styles.listActions}>
+              <div className={styles.actions}>
                 <button
                   className={styles.viewBtn}
                   type="button"
                   onClick={() => router.push(`/entries/${entry.id}`)}
+                  aria-label="View entry"
+                  title="View"
                 >
-                  View
+                  🔍 <span className={styles.btnText}>View</span>
                 </button>
 
                 <button
                   className={styles.editBtn}
                   type="button"
                   onClick={() => router.push(`/entries/${entry.id}/edit`)}
+                  aria-label="Edit entry"
+                  title="Edit"
                 >
-                  Edit
+                  ✏️ <span className={styles.btnText}>Edit</span>
                 </button>
               </div>
             </article>
@@ -171,11 +200,7 @@ export default function EntriesPage() {
 
       {entries.length > 5 && (
         <div className={styles.moreRow}>
-          <button
-            className={styles.ghostBtn}
-            type="button"
-            onClick={() => router.push('/entries/browse')}
-          >
+          <button className={styles.ghostBtn} type="button" onClick={() => router.push('/entries/browse')}>
             View all entries →
           </button>
         </div>

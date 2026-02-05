@@ -8,10 +8,20 @@ $muted: rgba(201, 255, 217, 0.72);
 $border: rgba(0, 255, 135, 0.18);
 $borderStrong: rgba(0, 255, 135, 0.32);
 
+$danger: #ff2a2a;
+$dangerBorder: rgba(255, 42, 42, 0.35);
+$dangerGlow: rgba(255, 42, 42, 0.22);
+
 @mixin focusRing {
   outline: none;
   border-color: rgba(0, 255, 135, 0.45);
   box-shadow: 0 0 0 4px rgba(0, 255, 135, 0.12);
+}
+
+@mixin focusRingDanger {
+  outline: none;
+  border-color: rgba(255, 42, 42, 0.55);
+  box-shadow: 0 0 0 4px rgba(255, 42, 42, 0.12);
 }
 
 .navbar {
@@ -48,9 +58,7 @@ $borderStrong: rgba(0, 255, 135, 0.32);
     box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.08);
   }
 
-  &:focus-visible {
-    @include focusRing;
-  }
+  &:focus-visible { @include focusRing; }
 }
 
 .left {
@@ -70,9 +78,7 @@ $borderStrong: rgba(0, 255, 135, 0.32);
   padding: 0.25rem 0.35rem;
   border-radius: 12px;
 
-  &:focus-visible {
-    @include focusRing;
-  }
+  &:focus-visible { @include focusRing; }
 }
 
 .title {
@@ -95,11 +101,6 @@ $borderStrong: rgba(0, 255, 135, 0.32);
 
 .right {
   display: none;
-}
-
-.spacer {
-  height: 44px;
-  width: 44px;
 }
 
 @media (min-width: 820px) {
@@ -141,62 +142,101 @@ $borderStrong: rgba(0, 255, 135, 0.32);
   }
 }
 
-.linkBtn {
-  background: transparent;
-  border: 1px solid rgba(0, 255, 135, 0.12);
-  color: $muted;
-  padding: 0.65rem 0.85rem;
-  border-radius: 12px;
+
+.btnIcon {
+  color: $neon;
+  text-shadow: 0 0 10px rgba(0, 255, 135, 0.45);
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.btnCursor {
+  color: $neon;
+  margin-left: 0.1rem;
+  animation: blink 1.05s steps(1) infinite;
+  text-shadow: 0 0 10px rgba(0, 255, 135, 0.35);
+}
+
+.primaryBtn,
+.linkBtn,
+.ghostBtn,
+.dangerBtn {
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+
+  padding: 0.65rem 0.9rem;
+  border-radius: 14px;
   cursor: pointer;
 
-  &:hover {
-    color: $text;
-    border-color: rgba(0, 255, 135, 0.28);
-    box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.05);
-  }
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 
-  &:focus-visible {
-    @include focusRing;
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    background 140ms ease,
+    border-color 140ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
   }
 }
 
 .primaryBtn {
-  background: rgba(0, 255, 135, 0.18);
+  background: linear-gradient(180deg, rgba(0, 255, 135, 0.22), rgba(0, 255, 135, 0.12));
   border: 1px solid $borderStrong;
-  color: #bfffd7;
-  padding: 0.65rem 0.9rem;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+  color: #caffdf;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,0.35),
+    0 0 18px rgba(0, 255, 135, 0.12);
 
   &:hover {
-    background: rgba(0, 255, 135, 0.22);
+    background: linear-gradient(180deg, rgba(0, 255, 135, 0.30), rgba(0, 255, 135, 0.16));
+    border-color: rgba(0, 255, 135, 0.45);
     box-shadow:
-      0 0 0 3px rgba(0, 255, 135, 0.08),
-      0 0 26px rgba(0, 255, 135, 0.18);
-    transform: translateY(-1px);
+      inset 0 0 0 1px rgba(0,0,0,0.35),
+      0 0 0 3px rgba(0, 255, 135, 0.10),
+      0 0 28px rgba(0, 255, 135, 0.22);
   }
 
-  &:focus-visible {
-    @include focusRing;
-  }
+  &:focus-visible { @include focusRing; }
 }
 
-.ghostBtn {
+.linkBtn {
   background: rgba(0, 0, 0, 0.45);
-  border: 1px solid $border;
+  border: 1px solid rgba(0, 255, 135, 0.16);
   color: $muted;
-  padding: 0.65rem 0.9rem;
-  border-radius: 12px;
-  cursor: pointer;
 
   &:hover {
     border-color: rgba(0, 255, 135, 0.30);
     box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.06);
-    transform: translateY(-1px);
+    color: $text;
   }
 
-  &:focus-visible {
-    @include focusRing;
+  &:focus-visible { @include focusRing; }
+}
+
+.dangerBtn {
+  background: linear-gradient(180deg, rgba(255, 42, 42, 0.18), rgba(255, 42, 42, 0.10));
+  border: 1px solid $dangerBorder;
+  color: rgba(255, 220, 220, 0.92);
+
+  .btnIcon,
+  .btnCursor {
+    color: $danger;
+    text-shadow: 0 0 10px rgba(255, 42, 42, 0.45);
   }
+
+  &:hover {
+    border-color: rgba(255, 42, 42, 0.55);
+    box-shadow:
+      0 0 0 3px rgba(255, 42, 42, 0.10),
+      0 0 26px $dangerGlow;
+    background: linear-gradient(180deg, rgba(255, 42, 42, 0.24), rgba(255, 42, 42, 0.14));
+  }
+
+  &:focus-visible { @include focusRingDanger; }
 }

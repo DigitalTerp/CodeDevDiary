@@ -4,14 +4,16 @@ import Editor from '@monaco-editor/react';
 import styles from './EntryForm.module.scss';
 
 type EntryFormProps = {
-  date: string;
+  date: string;            
   title: string;
-  tech: string; 
+  problem: string;         
+  tech: string;          
   notes: string;
   code: string;
 
   onDateChange: (v: string) => void;
   onTitleChange: (v: string) => void;
+  onProblemChange: (v: string) => void; 
   onTechChange: (v: string) => void;
   onNotesChange: (v: string) => void;
   onCodeChange: (v: string) => void;
@@ -19,81 +21,108 @@ type EntryFormProps = {
   onSubmit: (e: React.FormEvent) => void;
   submitLabel: string;
   disabled?: boolean;
-
-  onCancel?: () => void;
-  error?: string | null;
 };
 
 export default function EntryForm({
   date,
   title,
+  problem,
   tech,
   notes,
   code,
   onDateChange,
   onTitleChange,
+  onProblemChange,
   onTechChange,
   onNotesChange,
   onCodeChange,
   onSubmit,
   submitLabel,
   disabled,
-  onCancel,
-  error,
 }: EntryFormProps) {
   return (
     <form onSubmit={onSubmit} className={styles.form}>
-      <div className={styles.row}>
-        <label className={styles.label}>
-          Date
+      <div className={styles.grid}>
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="entry-date">
+            Date & Time
+          </label>
           <input
+            id="entry-date"
+            type="datetime-local"
             className={styles.input}
-            type="date"
             value={date}
             onChange={(e) => onDateChange(e.target.value)}
             required
           />
-        </label>
+        </div>
 
-        <label className={styles.label}>
-          Title
+        <div className={styles.field}>
+          <label className={styles.label} htmlFor="entry-title">
+            Title
+          </label>
           <input
+            id="entry-title"
             className={styles.input}
-            placeholder="What did you build/learn?"
+            placeholder="Short title for this entry…"
             value={title}
             onChange={(e) => onTitleChange(e.target.value)}
             required
           />
-        </label>
+        </div>
       </div>
 
-      <label className={styles.label}>
-        Tech (comma separated)
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="entry-problem">
+          Problem / What you were working on
+        </label>
+        <textarea
+          id="entry-problem"
+          className={styles.textarea}
+          placeholder="Describe the problem, bug, feature, or goal…"
+          value={problem}
+          onChange={(e) => onProblemChange(e.target.value)}
+          rows={4}
+        />
+      </div>
+
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="entry-tech">
+          Tech Used
+        </label>
         <input
+          id="entry-tech"
           className={styles.input}
-          placeholder="TypeScript, Next.js, Firebase, CSS..."
+          placeholder="TypeScript, Next.js, Firebase, SCSS (comma separated)…"
           value={tech}
           onChange={(e) => onTechChange(e.target.value)}
         />
-      </label>
+        <p className={styles.help}>
+          Tip: Separate tech with commas (Ex: <span>TypeScript, SCSS, Firebase</span>)
+        </p>
+      </div>
 
-      <label className={styles.label}>
-        Notes
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="entry-notes">
+          Notes
+        </label>
         <textarea
+          id="entry-notes"
           className={styles.textarea}
-          placeholder="What happened? what worked? what broke? what did you learn?"
+          placeholder="What did you learn? What was tricky? What would you do differently?"
           value={notes}
           onChange={(e) => onNotesChange(e.target.value)}
+          rows={6}
         />
-      </label>
+      </div>
 
-      <div className={styles.editorWrap}>
-        <div className={styles.editorHeader}>
-          <span className={styles.editorTitle}>Code / Syntax</span>
-          <span className={styles.editorHint}>Monaco (TypeScript)</span>
+      <div className={styles.field}>
+        <div className={styles.labelRow}>
+          <label className={styles.label}>Syntax / Code</label>
+          <span className={styles.miniHint}>Paste code snippets here</span>
         </div>
 
-        <div className={styles.editorFrame}>
+        <div className={styles.editorWrap}>
           <Editor
             height="320px"
             defaultLanguage="typescript"
@@ -103,30 +132,15 @@ export default function EntryForm({
             options={{
               minimap: { enabled: false },
               fontSize: 13,
-              tabSize: 2,
-              wordWrap: 'on',
               scrollBeyondLastLine: false,
-              automaticLayout: true,
+              wordWrap: 'on',
             }}
           />
         </div>
       </div>
 
-      {error ? <p className={styles.error}>{error}</p> : null}
-
       <div className={styles.actions}>
-        {onCancel ? (
-          <button
-            type="button"
-            className={styles.ghostBtn}
-            onClick={onCancel}
-            disabled={disabled}
-          >
-            Cancel
-          </button>
-        ) : null}
-
-        <button className={styles.primaryBtn} disabled={disabled}>
+        <button className={styles.primaryBtn} disabled={disabled} type="submit">
           {submitLabel}
         </button>
       </div>

@@ -1,164 +1,108 @@
-$neon: #00ff87;
-$text: #c9ffd9;
-$muted: rgba(201, 255, 217, 0.7);
-
-$border: rgba(0, 255, 135, 0.18);
-$borderStrong: rgba(0, 255, 135, 0.32);
-
-@mixin focusRing {
-  outline: none;
-  border-color: rgba(0, 255, 135, 0.55);
-  box-shadow: 0 0 0 4px rgba(0, 255, 135, 0.12);
-}
-
 .form {
+  max-width: 980px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  width: 100%;
-  max-width: 860px;
-
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+  gap: 1.1rem;
 }
 
-.row {
+.grid {
   display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 0.9rem;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
 
-  @media (max-width: 760px) {
+  @media (max-width: 820px) {
     grid-template-columns: 1fr;
   }
 }
 
-.label {
-  display: grid;
+.field {
+  display: flex;
+  flex-direction: column;
   gap: 0.45rem;
-  color: $muted;
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
+}
+
+.label {
+  color: rgba(201, 255, 217, 0.85);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .input,
 .textarea {
   width: 100%;
+  padding: 0.85rem 0.9rem;
   border-radius: 12px;
-  padding: 0.85rem 0.95rem;
-  color: $text;
-
-  background: rgba(0, 0, 0, 0.66);
-  border: 1px solid $border;
+  border: 1px solid rgba(0, 255, 135, 0.22);
+  background: rgba(0, 0, 0, 0.55);
+  color: rgba(220, 255, 235, 0.95);
+  outline: none;
 
   &:focus {
-    @include focusRing;
-  }
-
-  &::placeholder {
-    color: rgba(201, 255, 217, 0.45);
+    border-color: rgba(0, 255, 135, 0.5);
+    box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.12);
   }
 }
 
 .textarea {
-  min-height: 120px;
   resize: vertical;
-  line-height: 1.45;
+  min-height: 120px;
+}
+
+.help {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(201, 255, 217, 0.6);
+
+  span {
+    color: rgba(201, 255, 217, 0.85);
+  }
+}
+
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.miniHint {
+  font-size: 0.85rem;
+  color: rgba(201, 255, 217, 0.55);
 }
 
 .editorWrap {
-  border-radius: 16px;
-  border: 1px solid rgba(0, 255, 135, 0.16);
-  background: rgba(0, 0, 0, 0.40);
+  border-radius: 14px;
   overflow: hidden;
-}
-
-.editorHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 0.85rem 0.95rem;
-  border-bottom: 1px solid rgba(0, 255, 135, 0.14);
-  background: radial-gradient(520px 120px at 30% 0%, rgba(0, 255, 135, 0.10), transparent 70%);
-}
-
-.editorTitle {
-  color: rgba(201, 255, 217, 0.92);
-  letter-spacing: 0.06em;
-}
-
-.editorHint {
-  color: rgba(201, 255, 217, 0.55);
-  font-size: 0.8rem;
-}
-
-.editorFrame {
-  padding: 0.6rem;
-}
-
-.editorFrame :global(.monaco-editor),
-.editorFrame :global(.monaco-editor-background) {
-  background: rgba(0, 0, 0, 0.72) !important;
-}
-
-.editorFrame :global(.monaco-editor .margin) {
-  background: rgba(0, 0, 0, 0.72) !important;
-}
-
-.error {
-  margin: 0;
-  padding: 0.75rem 0.9rem;
-  border-radius: 12px;
-  color: #ffd2d2;
-  background: rgba(255, 60, 60, 0.10);
-  border: 1px solid rgba(255, 60, 60, 0.26);
+  border: 1px solid rgba(0, 255, 135, 0.22);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35) inset;
 }
 
 .actions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.6rem;
-  padding-top: 0.2rem;
-}
-
-.primaryBtn,
-.ghostBtn {
-  border-radius: 12px;
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  font-family: inherit;
+  padding-top: 0.25rem;
 }
 
 .primaryBtn {
-  background: rgba(0, 255, 135, 0.20);
-  border: 1px solid $borderStrong;
-  color: #bfffd7;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 255, 135, 0.32);
+  background: rgba(0, 255, 135, 0.12);
+  color: rgba(220, 255, 235, 0.95);
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
 
-  &:hover:not(:disabled) {
-    box-shadow:
-      0 0 0 3px rgba(0, 255, 135, 0.08),
-      0 0 26px rgba(0, 255, 135, 0.18);
+  &:hover {
     transform: translateY(-1px);
+    background: rgba(0, 255, 135, 0.18);
+    border-color: rgba(0, 255, 135, 0.5);
   }
 
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.55;
     cursor: not-allowed;
-  }
-}
-
-.ghostBtn {
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid $border;
-  color: $muted;
-
-  &:hover:not(:disabled) {
-    border-color: rgba(0, 255, 135, 0.30);
-    box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.06);
-    transform: translateY(-1px);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    transform: none;
   }
 }

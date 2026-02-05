@@ -1,6 +1,6 @@
-# Dev Diary
+# Code Dev Diary
 
-Dev Diary is a simple **coding journal / CRUD application** built with **Next.js, TypeScript, and SCSS Modules**. It is designed specifically for **developers who are learning or improving their coding skills** and want a structured place to track what they work on each day.
+Code Dev Diary is a simple **coding journal / CRUD application** built with **Next.js, TypeScript, and SCSS Modules**. It is designed specifically for **developers who are learning or improving their coding skills** and want a structured place to track what they work on each day.
 
 Instead of using a traditional journal or notes app, Dev Diary allows users to record **coding-focused entries**, including written notes *and* actual **syntax / code snippets**, making it easier to reflect on progress and revisit past solutions.
 
@@ -34,6 +34,7 @@ Dev Diary solves this by acting like a **developer-first journal**, combining wr
   Each Dev Diary entry includes:
   - Date
   - Title
+  - Problem (New!)
   - Technologies used (CSS, HTML, JavaScript, React, Firebase, etc.)
   - Notes / explanations
   - Code / syntax block for pasting real code
@@ -93,3 +94,24 @@ It can also serve as a learning project for developers who want to explore:
 ---
 
 Code Dev Diary is meant to grow alongside the developer using it — a simple tool that documents progress, mistakes, and wins along the coding journey.
+
+🔄 Recent Updates
+
+# 02/05/2026
+- UI & Form Enhancements
+Over the last several days, the application has received a series of focused UI and UX improvements aimed at clarity, consistency, and responsiveness across devices.
+Refined Entries and Browse Entries layouts with smaller, more readable cards
+Unified visual styling across cards, buttons, and navigation components
+Improved mobile responsiveness, including centered card content and overflow fixes
+Updated action buttons with symbol-based indicators for clearer visual hierarchy
+Enhanced navigation bar and drawer with consistent button treatments and improved usability
+Simplified the drawer experience by replacing search inputs with a dedicated Browse Entries action
+Expanded entry forms to support structured fields:
+Title
+Problem description
+Technology used
+Notes
+Syntax / code blocks
+Improved date handling to include time context where applicable
+General UI polish, spacing adjustments, and accessibility-focused refinements
+These updates bring the interface closer to a cohesive, developer-focused journaling experience while maintaining a clean, distraction-free workflow.

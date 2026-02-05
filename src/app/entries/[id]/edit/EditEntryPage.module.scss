@@ -1,114 +1,178 @@
 .page {
   min-height: 100vh;
-  padding: 2rem;
-  background: radial-gradient(1000px 650px at 30% 15%, rgba(0, 255, 135, 0.10), transparent 60%),
-              radial-gradient(900px 600px at 70% 35%, rgba(0, 255, 255, 0.06), transparent 60%),
-              #050805;
-  color: #c9ffd9;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.title {
-  font-size: 1.6rem;
-  letter-spacing: 0.02em;
-  text-shadow: 0 0 14px rgba(0, 255, 135, 0.25);
-}
-
-.backBtn {
-  background: rgba(0, 255, 135, 0.06);
-  border: 1px solid rgba(0, 255, 135, 0.25);
-  color: #a9ffcb;
-  padding: 0.55rem 0.75rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
-
-  &:hover {
-    background: rgba(0, 255, 135, 0.10);
-    box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.08), 0 0 18px rgba(0, 255, 135, 0.14);
-    transform: translateY(-1px);
-  }
+  background: radial-gradient(1200px 700px at 20% -10%, rgba(0, 255, 136, 0.12), transparent 55%),
+    radial-gradient(900px 600px at 100% 0%, rgba(0, 255, 136, 0.08), transparent 55%),
+    #070a08;
+  color: rgba(220, 255, 235, 0.95);
 }
 
 .loading {
-  min-height: 100vh;
+  padding: 2rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  color: rgba(0, 255, 136, 0.8);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(7, 10, 8, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 255, 136, 0.16);
+}
+
+.headerInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.15rem 1.25rem 1.25rem;
   display: grid;
-  place-items: center;
-  color: #86ffb8;
-  text-shadow: 0 0 10px rgba(0, 255, 135, 0.22);
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.headerLeft,
+.headerRight {
+  display: flex;
+  align-items: center;
+}
+
+.headerLeft {
+  justify-content: flex-start;
+}
+
+.headerRight {
+  justify-content: flex-end;
+}
+
+.headerCenter {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.title {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+  font-size: 1.35rem;
+  color: rgba(230, 255, 241, 0.98);
+  white-space: nowrap;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(143, 217, 182, 0.85);
+}
+
+.cursor {
+  margin-left: 0.25rem;
+  color: #00ff88;
+  animation: blink 1.05s steps(1) infinite;
+}
+
+.backBtn,
+.viewBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  background: transparent;
+  border: 1px solid rgba(0, 255, 136, 0.32);
+  color: rgba(0, 255, 136, 0.95);
+  padding: 0.65rem 0.95rem;
+  border-radius: 14px;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.backBtn:hover,
+.viewBtn:hover {
+  background: rgba(0, 255, 136, 0.09);
+  border-color: rgba(0, 255, 136, 0.55);
+  box-shadow: 0 0 18px rgba(0, 255, 136, 0.12);
+}
+
+.content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem;
 }
 
 .error {
   margin: 0 0 1rem 0;
-  padding: 0.8rem 1rem;
-  border-radius: 12px;
-  background: rgba(255, 60, 60, 0.08);
-  border: 1px solid rgba(255, 60, 60, 0.25);
-  color: #ffd2d2;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 72, 72, 0.25);
+  background: rgba(255, 72, 72, 0.08);
+  color: rgba(255, 190, 190, 0.95);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
 
-/* Optional shared input styling */
-.page :global(input),
-.page :global(textarea) {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(0, 255, 135, 0.18);
-  color: #d6ffe6;
-  padding: 0.8rem 0.9rem;
-  border-radius: 12px;
-  outline: none;
-  transition: border-color 120ms ease, box-shadow 120ms ease;
-
-  &::placeholder {
-    color: rgba(201, 255, 217, 0.55);
+@media (max-width: 768px) {
+  .headerInner {
+    grid-template-columns: auto 1fr auto;
+    padding: 0.85rem 0.9rem;
+    gap: 0.65rem;
   }
 
-  &:focus {
-    border-color: rgba(0, 255, 135, 0.45);
-    box-shadow: 0 0 0 4px rgba(0, 255, 135, 0.10);
-  }
-}
-
-.page :global(textarea) {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.page :global(button) {
-  background: rgba(0, 255, 135, 0.10);
-  border: 1px solid rgba(0, 255, 135, 0.28);
-  color: #b8ffd3;
-  padding: 0.8rem 1rem;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
-
-  &:hover {
-    background: rgba(0, 255, 135, 0.14);
-    box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.08), 0 0 22px rgba(0, 255, 135, 0.16);
-    transform: translateY(-1px);
+  .headerCenter {
+    text-align: center;
+    align-items: center;
+    gap: 0;
+    min-width: 0;
   }
 
-  &:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+  .title {
+    font-size: 0.98rem;
+    letter-spacing: 0.1em;
+    line-height: 1.1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .subtitle {
+    display: none;
+  }
+
+  .backBtn,
+  .viewBtn {
+    font-size: 0.75rem;
+    padding: 0.55rem 0.7rem;
+    min-height: 40px;
+    border-radius: 12px;
+    white-space: nowrap;
   }
 }
 
-.page :global(.monaco-editor),
-.page :global(.monaco-editor .overflow-guard) {
-  border-radius: 14px !important;
+@media (max-width: 420px) {
+  .title {
+    font-size: 0.88rem;
+    letter-spacing: 0.08em;
+  }
+
+  .backBtn,
+  .viewBtn {
+    font-size: 0.72rem;
+    padding: 0.52rem 0.6rem;
+    min-height: 38px;
+  }
 }
 
-.page :global(.monaco-editor) {
-  box-shadow: 0 0 0 1px rgba(0, 255, 135, 0.18), 0 0 26px rgba(0, 255, 135, 0.10);
+@keyframes blink {
+  0%,
+  49%,
+  100% {
+    opacity: 1;
+  }
+  50%,
+  99% {
+    opacity: 0;
+  }
 }

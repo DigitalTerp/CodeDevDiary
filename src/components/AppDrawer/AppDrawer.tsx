@@ -9,15 +9,11 @@ type Props = {
   greeting: string;
   userEmail: string;
 
-  search: string;
-  onSearchChange: (value: string) => void;
-
-  techOptions: string[];
-  techFilter: string;
-  onTechFilterChange: (value: string) => void;
-
   onGoEntries: () => void;
   onNewEntry: () => void;
+
+  onBrowse: () => void;
+
   onLogout: () => void;
 };
 
@@ -26,13 +22,9 @@ export default function AppDrawer({
   onClose,
   greeting,
   userEmail,
-  search,
-  onSearchChange,
-  techOptions,
-  techFilter,
-  onTechFilterChange,
   onGoEntries,
   onNewEntry,
+  onBrowse,
   onLogout,
 }: Props) {
   if (!open) return null;
@@ -46,7 +38,13 @@ export default function AppDrawer({
           <div className={styles.headerTitle}>
             Menu <span className={styles.cursor}>▮</span>
           </div>
-          <button className={styles.closeBtn} onClick={onClose} aria-label="Close menu" type="button">
+
+          <button
+            className={styles.closeBtn}
+            onClick={onClose}
+            aria-label="Close menu"
+            type="button"
+          >
             ✕
           </button>
         </div>
@@ -58,28 +56,20 @@ export default function AppDrawer({
 
         <div className={styles.actions}>
           <button className={styles.linkBtn} onClick={onGoEntries} type="button">
-            Log Entries
+            ⌁ Log Entries
           </button>
-          <button className={styles.linkBtn} onClick={onNewEntry} type="button">
-            + New Entry
-          </button>
-        </div>
 
-        <div className={styles.section}>
-          <label className={styles.label} htmlFor="drawer-search">
-            Search
-          </label>
-          <input
-            id="drawer-search"
-            className={styles.search}
-            placeholder="Search title or notes…"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
+          <button className={styles.primaryBtn} onClick={onNewEntry} type="button">
+            ⊕ New Entry
+          </button>
+
+          <button className={styles.ghostBtn} onClick={onBrowse} type="button">
+            ⧉ Browse + Search
+          </button>
         </div>
 
         <button className={styles.logoutBtn} onClick={onLogout} type="button">
-          Logout
+          ⛔ Logout
         </button>
       </aside>
     </>

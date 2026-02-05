@@ -5,16 +5,19 @@ $muted: rgba(201, 255, 217, 0.72);
 $border: rgba(0, 255, 135, 0.18);
 $borderStrong: rgba(0, 255, 135, 0.32);
 
+$danger: rgba(255, 60, 60, 0.25);
+$dangerBg: rgba(255, 60, 60, 0.08);
+
 @mixin focusRing {
   outline: none;
-  border-color: rgba(0, 255, 135, 0.45);
+  border-color: rgba(0, 255, 135, 0.55);
   box-shadow: 0 0 0 4px rgba(0, 255, 135, 0.12);
 }
 
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.72);
+  background: rgba(0, 0, 0, 0.72);
   z-index: 50;
 }
 
@@ -28,21 +31,27 @@ $borderStrong: rgba(0, 255, 135, 0.32);
 
   background:
     radial-gradient(520px 180px at 30% 0%, rgba(0, 255, 135, 0.14), transparent 70%),
-    linear-gradient(180deg, rgba(0,0,0,0.82), rgba(0,0,0,0.62));
+    linear-gradient(180deg, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.62));
 
   border-right: 1px solid $border;
-  box-shadow: 18px 0 40px rgba(0,0,0,0.55);
-  padding: 1rem;
+  box-shadow: 18px 0 40px rgba(0, 0, 0, 0.55);
 
+  padding: 1rem;
   color: $text;
+
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
+
+  /* ✅ Prevent spillover on mobile */
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
@@ -50,6 +59,7 @@ $borderStrong: rgba(0, 255, 135, 0.32);
   font-size: 1.05rem;
   letter-spacing: 0.06em;
   text-shadow: 0 0 12px rgba(0, 255, 135, 0.22);
+  min-width: 0;
 }
 
 .cursor {
@@ -60,8 +70,14 @@ $borderStrong: rgba(0, 255, 135, 0.32);
 }
 
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 
 .closeBtn {
@@ -72,8 +88,19 @@ $borderStrong: rgba(0, 255, 135, 0.32);
   height: 40px;
   width: 40px;
   cursor: pointer;
+  flex: 0 0 auto;
 
-  &:focus-visible { @include focusRing; }
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba(0, 255, 135, 0.3);
+    box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.08);
+  }
+
+  &:focus-visible {
+    @include focusRing;
+  }
 }
 
 .userBlock {
@@ -82,6 +109,8 @@ $borderStrong: rgba(0, 255, 135, 0.32);
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(0, 255, 135, 0.16);
   margin-bottom: 0.9rem;
+
+  min-width: 0;
 }
 
 .greeting {
@@ -94,6 +123,8 @@ $borderStrong: rgba(0, 255, 135, 0.32);
   font-size: 0.95rem;
   color: $text;
   opacity: 0.92;
+
+  /* ✅ stop overflow */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -102,97 +133,127 @@ $borderStrong: rgba(0, 255, 135, 0.32);
 .actions {
   display: grid;
   gap: 0.6rem;
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.95rem;
 }
 
-.linkBtn {
-  text-align: left;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(0, 255, 135, 0.16);
-  color: $text;
-  padding: 0.8rem 0.9rem;
-  border-radius: 14px;
-  cursor: pointer;
-
-  &:hover {
-    border-color: rgba(0, 255, 135, 0.30);
-    box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.06);
-  }
-
-  &:focus-visible { @include focusRing; }
-}
-
-.section {
-  padding: 0.9rem;
-  border-radius: 14px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(0, 255, 135, 0.16);
-  margin-bottom: 0.9rem;
-}
-
-.label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: $muted;
-  font-size: 0.85rem;
-}
-
-.search {
+/* ✅ Shared button base (matches Entries / Browse buttons) */
+.btnBase {
   width: 100%;
-  background: rgba(0, 0, 0, 0.62);
-  border: 1px solid rgba(0, 255, 135, 0.22);
-  color: $text;
+  text-align: left;
+
+  border-radius: 14px;
   padding: 0.85rem 0.95rem;
-  border-radius: 12px;
 
-  &:focus { @include focusRing; }
-}
-
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.filter,
-.filterActive {
-  font-size: 0.75rem;
-  padding: 0.32rem 0.7rem;
-  border-radius: 999px;
   cursor: pointer;
-  border: 1px solid rgba(0, 255, 135, 0.18);
-  transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+  border: 1px solid transparent;
+
+  transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease,
+    border-color 140ms ease;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.55rem;
+
+  /* ✅ prevent text pushing layout */
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  letter-spacing: 0.08em;
+
+  &:focus-visible {
+    @include focusRing;
+  }
 }
 
-.filter {
+/* ✅ Matrix symbol wrapper (keeps icons aligned) */
+.sym {
+  flex: 0 0 auto;
+  width: 1.15rem;
+  display: inline-flex;
+  justify-content: center;
+  opacity: 0.95;
+  color: rgba(0, 255, 135, 0.9);
+}
+
+/* Log Entries / subtle */
+.linkBtn {
+  @extend .btnBase;
   background: rgba(0, 0, 0, 0.45);
-  color: $muted;
+  border-color: rgba(0, 255, 135, 0.16);
+  color: $text;
 
   &:hover {
-    border-color: rgba(0, 255, 135, 0.32);
+    transform: translateY(-1px);
+    border-color: rgba(0, 255, 135, 0.3);
     box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.06);
   }
 }
 
-.filterActive {
-  background: rgba(0, 255, 135, 0.18);
+/* New Entry / strong */
+.primaryBtn {
+  @extend .btnBase;
+  background: rgba(0, 255, 135, 0.16);
   border-color: $borderStrong;
   color: #bfffd7;
-  box-shadow:
-    0 0 0 3px rgba(0, 255, 135, 0.08),
-    0 0 18px rgba(0, 255, 135, 0.14);
-}
-
-.logoutBtn {
-  width: 100%;
-  background: rgba(255, 60, 60, 0.08);
-  border: 1px solid rgba(255, 60, 60, 0.25);
-  color: #ffd2d2;
-  padding: 0.9rem 1rem;
-  border-radius: 14px;
-  cursor: pointer;
 
   &:hover {
-    box-shadow: 0 0 0 3px rgba(255, 60, 60, 0.08);
+    transform: translateY(-1px);
+    background: rgba(0, 255, 135, 0.2);
+    box-shadow:
+      0 0 0 3px rgba(0, 255, 135, 0.08),
+      0 0 26px rgba(0, 255, 135, 0.14);
+  }
+}
+
+/* Browse / ghost */
+.ghostBtn {
+  @extend .btnBase;
+  background: rgba(0, 0, 0, 0.45);
+  border-color: $border;
+  color: $muted;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba(0, 255, 135, 0.3);
+    box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.06);
+    color: $text;
+  }
+}
+
+/* ✅ Logout / matrix red */
+.logoutBtn {
+  @extend .btnBase;
+  justify-content: center;
+  text-align: center;
+
+  background: $dangerBg;
+  border-color: $danger;
+  color: #ffd2d2;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(255, 60, 60, 0.1);
+    border-color: rgba(255, 60, 60, 0.35);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: rgba(255, 60, 60, 0.55);
+    box-shadow: 0 0 0 4px rgba(255, 60, 60, 0.12);
+  }
+}
+
+/* ✅ small screens: keep things clean */
+@media (max-width: 420px) {
+  .drawer {
+    padding: 0.85rem;
+  }
+
+  .btnBase {
+    padding: 0.8rem 0.9rem;
+    letter-spacing: 0.06em;
   }
 }

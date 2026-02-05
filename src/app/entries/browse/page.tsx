@@ -17,7 +17,7 @@ function getGreeting() {
 }
 
 function parseEntryDate(dateStr: string) {
-  const d = new Date(`${dateStr}T00:00:00`);
+  const d = new Date(dateStr.includes('T') ? dateStr : `${dateStr}T00:00:00`);
   return isNaN(d.getTime()) ? null : d;
 }
 
@@ -27,11 +27,7 @@ function startOfToday() {
 }
 
 function isSameDay(a: Date, b: Date) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
 function isWithinLastNDays(d: Date, n: number) {
@@ -72,6 +68,12 @@ function highlight(text: string, query: string) {
   });
 }
 
+function clampText(s: string, max = 160) {
+  const t = (s ?? '').trim();
+  if (!t) return '—';
+  return t.length > max ? `${t.slice(0, max)}…` : t;
+}
+
 export default function BrowseEntriesPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -90,7 +92,7 @@ export default function BrowseEntriesPage() {
     try {
       await logOut();
     } finally {
-      router.replace('/'); 
+      router.replace('/');
       router.refresh();
     }
   }
@@ -120,9 +122,11 @@ export default function BrowseEntriesPage() {
     if (!q) return entries;
 
     return entries.filter((e) => {
-      const t = (e.title ?? '').toLowerCase();
-      const n = (e.notes ?? '').toLowerCase();
-      return t.includes(q) || n.includes(q);
+      const title = (e.title ?? '').toLowerCase();
+      const notes = (e.notes ?? '').toLowerCase();
+      const code = ((e as any).code ?? '').toLowerCase();
+      const problem = (((e as any).problem ?? '') as string).toLowerCase();
+      return title.includes(q) || notes.includes(q) || code.includes(q) || problem.includes(q);
     });
   }, [entries, search]);
 
@@ -156,17 +160,15 @@ export default function BrowseEntriesPage() {
       return;
     }
     if (!activeId || !filteredEntries.some((e) => e.id === activeId)) {
-      setActiveId(filteredEntries[0].id);
+      setActiveId(filteredEntries[0].id ?? null);
     }
   }, [filteredEntries, activeId]);
 
-  
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       const target = e.target as HTMLElement | null;
       const tag = target?.tagName?.toLowerCase();
-      const isTypingInField =
-        tag === 'input' || tag === 'textarea' || (target as any)?.isContentEditable;
+      const isTypingInField = tag === 'input' || tag === 'textarea' || (target as any)?.isContentEditable;
 
       if (e.key === '/' && !isTypingInField) {
         e.preventDefault();
@@ -185,21 +187,19 @@ export default function BrowseEntriesPage() {
       if (isTypingInField) return;
       if (filteredEntries.length === 0) return;
 
-      const idx = activeId
-        ? filteredEntries.findIndex((x) => x.id === activeId)
-        : 0;
+      const idx = activeId ? filteredEntries.findIndex((x) => x.id === activeId) : 0;
 
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         const next = Math.min(filteredEntries.length - 1, Math.max(0, idx) + 1);
-        setActiveId(filteredEntries[next].id);
+        setActiveId(filteredEntries[next].id ?? null);
         return;
       }
 
       if (e.key === 'ArrowUp') {
         e.preventDefault();
         const prev = Math.max(0, Math.max(0, idx) - 1);
-        setActiveId(filteredEntries[prev].id);
+        setActiveId(filteredEntries[prev].id ?? null);
         return;
       }
 
@@ -218,34 +218,45 @@ export default function BrowseEntriesPage() {
 
   const greeting = getGreeting();
 
-  function Row({ entry }: { entry: DevDiaryEntry }) {
+  function Card({ entry }: { entry: DevDiaryEntry }) {
     const selected = entry.id === activeId;
+    const tech = Array.isArray(entry.tech) ? entry.tech : [];
+    const codePreview = clampText((entry as any).code ?? '', 220);
 
     return (
       <article
-        className={selected ? styles.rowActive : styles.row}
-        onMouseEnter={() => setActiveId(entry.id)}
+        className={selected ? styles.cardActive : styles.card}
+        onMouseEnter={() => setActiveId(entry.id ?? null)}
       >
-        <div className={styles.meta}>
-          <span className={styles.date}>{entry.date}</span>
-          <h2 className={styles.title}>{highlight(entry.title ?? '', search)}</h2>
+        <div className={styles.metaRow}>
+          <span className={styles.dateTime}>{entry.date}</span>
+        </div>
+
+        <h2 className={styles.title}>{highlight(entry.title ?? '', search)}</h2>
+
+        {tech.length > 0 && (
+          <div className={styles.chips}>
+            {tech.slice(0, 6).map((t) => (
+              <span key={t} className={styles.chip}>
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className={styles.syntaxBlock}>
+          <div className={styles.syntaxLabel}>Syntax</div>
+          <pre className={styles.syntax}>
+            <code>{codePreview}</code>
+          </pre>
         </div>
 
         <div className={styles.actions}>
-          <button
-            className={styles.viewBtn}
-            onClick={() => router.push(`/entries/${entry.id}`)}
-            type="button"
-          >
-            View
+          <button className={styles.viewBtn} onClick={() => router.push(`/entries/${entry.id}`)} type="button">
+            🔍 View
           </button>
-
-          <button
-            className={styles.editBtn}
-            onClick={() => router.push(`/entries/${entry.id}/edit`)}
-            type="button"
-          >
-            Edit
+          <button className={styles.editBtn} onClick={() => router.push(`/entries/${entry.id}/edit`)} type="button">
+            ✏️ Edit
           </button>
         </div>
       </article>
@@ -262,16 +273,11 @@ export default function BrowseEntriesPage() {
         onOpenMenu={() => setDrawerOpen(true)}
       />
 
-      <AppDrawer
+            <AppDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         greeting={greeting}
         userEmail={user.email ?? ''}
-        search={search}
-        onSearchChange={setSearch}
-        techOptions={[]}
-        techFilter=""
-        onTechFilterChange={() => {}}
         onGoEntries={() => {
           router.push('/entries');
           setDrawerOpen(false);
@@ -280,11 +286,16 @@ export default function BrowseEntriesPage() {
           router.push('/entries/new');
           setDrawerOpen(false);
         }}
+        onBrowse={() => {
+          router.push('/entries/browse');
+          setDrawerOpen(false);
+        }}
         onLogout={async () => {
           setDrawerOpen(false);
           await handleLogout();
         }}
       />
+
 
       <div className={styles.navSpacer} />
 
@@ -301,7 +312,7 @@ export default function BrowseEntriesPage() {
         <input
           ref={searchRef}
           className={styles.search}
-          placeholder="Search title or notes…"
+          placeholder="Search title, notes, syntax…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -316,33 +327,21 @@ export default function BrowseEntriesPage() {
           {grouped.today.length > 0 && (
             <>
               <h3 className={styles.groupTitle}>Today</h3>
-              <div className={styles.group}>
-                {grouped.today.map((entry) => (
-                  <Row key={entry.id} entry={entry} />
-                ))}
-              </div>
+              <div className={styles.group}>{grouped.today.map((e) => <Card key={e.id} entry={e} />)}</div>
             </>
           )}
 
           {grouped.week.length > 0 && (
             <>
               <h3 className={styles.groupTitle}>Last 7 Days</h3>
-              <div className={styles.group}>
-                {grouped.week.map((entry) => (
-                  <Row key={entry.id} entry={entry} />
-                ))}
-              </div>
+              <div className={styles.group}>{grouped.week.map((e) => <Card key={e.id} entry={e} />)}</div>
             </>
           )}
 
           {grouped.older.length > 0 && (
             <>
               <h3 className={styles.groupTitle}>Older</h3>
-              <div className={styles.group}>
-                {grouped.older.map((entry) => (
-                  <Row key={entry.id} entry={entry} />
-                ))}
-              </div>
+              <div className={styles.group}>{grouped.older.map((e) => <Card key={e.id} entry={e} />)}</div>
             </>
           )}
         </section>
